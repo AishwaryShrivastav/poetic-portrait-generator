@@ -5,11 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/sonner";
+import { Camera, Image, User, Star, Rocket, Gamepad, SquareUser } from "lucide-react";
+import { ImageStyle } from "../types/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface ImageCaptureProps {
   onCapture: (imageData: string) => void;
   capturedImage: string | null;
-  onGenerate: () => void;
+  onGenerate: (style: ImageStyle) => void;
   onBack: () => void;
 }
 
@@ -21,6 +25,7 @@ const ImageCapture = ({
 }: ImageCaptureProps) => {
   const [useWebcam, setUseWebcam] = useState<boolean>(false);
   const webcamRef = useRef<Webcam | null>(null);
+  const [selectedStyle, setSelectedStyle] = useState<ImageStyle>("professional");
   
   const handleCapture = () => {
     if (webcamRef.current) {
@@ -62,6 +67,15 @@ const ImageCapture = ({
     onCapture("");
   };
 
+  const imageStyles = [
+    { id: "professional", name: "Professional", icon: <Image size={20} />, description: "Standard professional portrait" },
+    { id: "linkedin", name: "LinkedIn", icon: <User size={20} />, description: "Professional headshot for LinkedIn" },
+    { id: "avatar", name: "AI Avatar", icon: <SquareUser size={20} />, description: "Realistic AI avatar based on your role" },
+    { id: "marvel", name: "Marvel", icon: <Star size={20} />, description: "Marvel superhero character" },
+    { id: "rockstar", name: "Rockstar", icon: <Rocket size={20} />, description: "Music rockstar style" },
+    { id: "gta", name: "GTA", icon: <Gamepad size={20} />, description: "GTA 5 game character style" }
+  ];
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
@@ -77,6 +91,7 @@ const ImageCapture = ({
                 onClick={toggleMethod}
                 className="text-theme-600 border-theme-300"
               >
+                {useWebcam ? <Camera className="mr-2" size={16} /> : <Image className="mr-2" size={16} />}
                 {useWebcam ? "Switch to File Upload" : "Switch to Camera"}
               </Button>
             </div>
@@ -100,6 +115,7 @@ const ImageCapture = ({
                   onClick={handleCapture}
                   className="w-full bg-theme-600 hover:bg-theme-700 text-white"
                 >
+                  <Camera className="mr-2" size={16} />
                   Capture Photo
                 </Button>
               </div>
@@ -136,12 +152,44 @@ const ImageCapture = ({
         ) : (
           <>
             <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 mb-4">
-              <img
-                src={capturedImage}
-                alt="Captured"
-                className="w-full h-auto"
-              />
+              <AspectRatio ratio={1/1} className="bg-muted">
+                <img
+                  src={capturedImage}
+                  alt="Captured"
+                  className="w-full h-full object-cover"
+                />
+              </AspectRatio>
             </div>
+
+            <Tabs defaultValue="professional" onValueChange={(value) => setSelectedStyle(value as ImageStyle)} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="professional">Professional</TabsTrigger>
+                <TabsTrigger value="linkedin">LinkedIn</TabsTrigger>
+                <TabsTrigger value="avatar">AI Avatar</TabsTrigger>
+              </TabsList>
+              <TabsList className="grid grid-cols-3">
+                <TabsTrigger value="marvel">Marvel</TabsTrigger>
+                <TabsTrigger value="rockstar">Rockstar</TabsTrigger>
+                <TabsTrigger value="gta">GTA 5</TabsTrigger>
+              </TabsList>
+
+              <div className="mt-4">
+                {imageStyles.map((style) => (
+                  <TabsContent key={style.id} value={style.id} className="mt-0">
+                    <div className="p-3 bg-muted rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-background rounded-full">{style.icon}</div>
+                        <div>
+                          <h3 className="font-medium">{style.name}</h3>
+                          <p className="text-xs text-muted-foreground">{style.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                ))}
+              </div>
+            </Tabs>
+
             <div className="flex space-x-3">
               <Button 
                 variant="outline" 
@@ -151,7 +199,7 @@ const ImageCapture = ({
                 Retake
               </Button>
               <Button 
-                onClick={onGenerate}
+                onClick={() => onGenerate(selectedStyle)}
                 className="flex-1 bg-theme-600 hover:bg-theme-700 text-white"
               >
                 Generate

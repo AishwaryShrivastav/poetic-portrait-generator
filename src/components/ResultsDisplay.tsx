@@ -1,18 +1,23 @@
 
-import { UserData } from "../types/types";
+import { UserData, ImageStyle } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
+import { RefreshCw, Image as ImageIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ResultsDisplayProps {
   result: {
     poem: string;
     portraitUrl: string;
+    portraitStyle?: ImageStyle;
   };
   userData: UserData;
   onSendEmail: () => void;
   onPrint: () => void;
   onReset: () => void;
+  onRegeneratePoem: () => void;
+  onRegenerateImage: (style?: ImageStyle) => void;
 }
 
 const ResultsDisplay = ({
@@ -20,11 +25,26 @@ const ResultsDisplay = ({
   userData,
   onSendEmail,
   onPrint,
-  onReset
+  onReset,
+  onRegeneratePoem,
+  onRegenerateImage
 }: ResultsDisplayProps) => {
   const formattedPoem = result.poem.split('\n').map((line, i) => (
     <p key={i} className="my-1">{line}</p>
   ));
+
+  // Style names for display
+  const getStyleDisplayName = (style?: ImageStyle): string => {
+    switch(style) {
+      case "professional": return "Professional Portrait";
+      case "linkedin": return "LinkedIn Headshot";
+      case "avatar": return "AI Avatar";
+      case "marvel": return "Marvel Character";
+      case "rockstar": return "Rockstar";
+      case "gta": return "GTA 5 Character";
+      default: return "Professional Portrait";
+    }
+  };
 
   return (
     <div className="space-y-6 print:p-0">
@@ -44,9 +64,19 @@ const ResultsDisplay = ({
         <div className="print:hidden">
           <Card className="p-6 bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700">
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300">
-                Personalized Poem
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300">
+                  Personalized Poem
+                </h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onRegeneratePoem} 
+                  className="text-gray-500 hover:text-theme-600"
+                >
+                  <RefreshCw size={16} className="mr-1" /> New Poem
+                </Button>
+              </div>
               
               <Separator className="bg-theme-200 dark:bg-theme-700" />
               
@@ -63,18 +93,86 @@ const ResultsDisplay = ({
 
         <div className="print:hidden">
           <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700 overflow-hidden">
-            <div className="p-4 pb-0">
-              <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300 mb-2">
-                AI Portrait
-              </h3>
+            <div className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300">
+                  AI Portrait
+                </h3>
+                {result.portraitStyle && (
+                  <Badge variant="outline" className="ml-2">
+                    {getStyleDisplayName(result.portraitStyle)}
+                  </Badge>
+                )}
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => onRegenerateImage(result.portraitStyle)} 
+                className="text-gray-500 hover:text-theme-600"
+              >
+                <ImageIcon size={16} className="mr-1" /> New Image
+              </Button>
             </div>
             
-            <div className="p-4">
+            <div className="p-4 pt-0">
               <img 
                 src={result.portraitUrl} 
                 alt="AI Generated Portrait" 
                 className="w-full h-auto rounded-md"
               />
+            </div>
+
+            <div className="p-4 pt-0">
+              <div className="grid grid-cols-3 gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("linkedin")}
+                  className="text-xs h-8"
+                >
+                  LinkedIn
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("avatar")}
+                  className="text-xs h-8"
+                >
+                  AI Avatar
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("marvel")}
+                  className="text-xs h-8"
+                >
+                  Marvel
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("rockstar")}
+                  className="text-xs h-8"
+                >
+                  Rockstar
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("gta")}
+                  className="text-xs h-8"
+                >
+                  GTA 5
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onRegenerateImage("professional")}
+                  className="text-xs h-8"
+                >
+                  Professional
+                </Button>
+              </div>
             </div>
           </Card>
         </div>

@@ -10,5 +10,15 @@ export interface GeneratedResult {
   id: string;
   poem: string;
   portraitUrl: string;
+  portraitStyle?: ImageStyle;
   createdAt: string;
 }
+
+export type ImageStyle = 
+  | "professional" 
+  | "linkedin" 
+  | "avatar" 
+  | "marvel" 
+  | "rockstar" 
+  | "gta";
+

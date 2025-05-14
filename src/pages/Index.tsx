@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import UserForm from "../components/UserForm";
 import ImageCapture from "../components/ImageCapture";
@@ -8,7 +9,7 @@ import ProcessingLoader from "../components/ProcessingLoader";
 import { toast } from "@/components/ui/sonner";
 import { generatePoem, generatePortrait } from "../utils/openaiService";
 import { v4 as uuidv4 } from "uuid";
-import { UserData, GeneratedResult } from "../types/types";
+import { UserData, GeneratedResult, ImageStyle } from "../types/types";
 
 const Index = () => {
   const [step, setStep] = useState<number>(1);
@@ -26,7 +27,7 @@ const Index = () => {
     setCapturedImage(imageData);
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (style: ImageStyle = "professional") => {
     if (!userData || !capturedImage) {
       toast.error("Missing data. Please complete all steps.");
       return;
@@ -46,7 +47,8 @@ const Index = () => {
       const portraitUrl = await generatePortrait(
         userData.name,
         userData.designation,
-        capturedImage
+        capturedImage,
+        style
       );
       
       // Create a result object
@@ -54,6 +56,7 @@ const Index = () => {
         id: uuidv4(),
         poem,
         portraitUrl,
+        portraitStyle: style,
         createdAt: new Date().toISOString(),
       };
       
@@ -68,6 +71,89 @@ const Index = () => {
     } catch (error) {
       console.error('Error generating content:', error);
       toast.error("Failed to generate content. Please check your API key and try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleRegeneratePoem = async () => {
+    if (!userData || !generatedResult) {
+      toast.error("Missing data. Cannot regenerate poem.");
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    try {
+      const newPoem = await generatePoem(
+        userData.name,
+        userData.designation,
+        userData.company
+      );
+      
+      // Update the existing result with the new poem
+      const updatedResult = {
+        ...generatedResult,
+        poem: newPoem,
+      };
+      
+      setGeneratedResult(updatedResult);
+      toast.success("Generated a new personalized poem!");
+      
+      // Update in localStorage
+      const results = JSON.parse(localStorage.getItem('generatedResults') || '[]');
+      const updatedResults = results.map((r: GeneratedResult) => 
+        r.id === generatedResult.id ? updatedResult : r
+      );
+      localStorage.setItem('generatedResults', JSON.stringify(updatedResults));
+      
+    } catch (error) {
+      console.error('Error regenerating poem:', error);
+      toast.error("Failed to generate new poem. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleRegenerateImage = async (style?: ImageStyle) => {
+    if (!userData || !capturedImage || !generatedResult) {
+      toast.error("Missing data. Cannot regenerate image.");
+      return;
+    }
+
+    // Use the provided style or fallback to the current style or "professional"
+    const imageStyle = style || generatedResult.portraitStyle || "professional";
+    
+    setIsProcessing(true);
+    
+    try {
+      const newPortraitUrl = await generatePortrait(
+        userData.name,
+        userData.designation,
+        capturedImage,
+        imageStyle
+      );
+      
+      // Update the existing result with the new image
+      const updatedResult = {
+        ...generatedResult,
+        portraitUrl: newPortraitUrl,
+        portraitStyle: imageStyle,
+      };
+      
+      setGeneratedResult(updatedResult);
+      toast.success(`Generated a new ${imageStyle} portrait!`);
+      
+      // Update in localStorage
+      const results = JSON.parse(localStorage.getItem('generatedResults') || '[]');
+      const updatedResults = results.map((r: GeneratedResult) => 
+        r.id === generatedResult.id ? updatedResult : r
+      );
+      localStorage.setItem('generatedResults', JSON.stringify(updatedResults));
+      
+    } catch (error) {
+      console.error('Error regenerating image:', error);
+      toast.error("Failed to generate new image. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -112,7 +198,7 @@ const Index = () => {
               <ProcessingLoader />
             ) : (
               <>
-                {step === 1 && <UserForm onSubmit={handleFormSubmit} />}
+                {step === 1 && <UserForm onSubmit={handleFormSubmit} initialData={userData} />}
                 
                 {step === 2 && (
                   <ImageCapture 
@@ -130,6 +216,8 @@ const Index = () => {
                     onSendEmail={handleSendEmail}
                     onPrint={handlePrint}
                     onReset={handleReset}
+                    onRegeneratePoem={handleRegeneratePoem}
+                    onRegenerateImage={handleRegenerateImage}
                   />
                 )}
               </>
