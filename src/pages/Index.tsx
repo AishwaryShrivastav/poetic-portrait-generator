@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import UserForm from "../components/UserForm";
 import ImageCapture from "../components/ImageCapture";
@@ -9,13 +8,14 @@ import ProcessingLoader from "../components/ProcessingLoader";
 import { toast } from "@/components/ui/sonner";
 import { generatePoem, generatePortrait } from "../utils/openaiService";
 import { v4 as uuidv4 } from "uuid";
+import { UserData, GeneratedResult } from "../types/types";
 
 const Index = () => {
   const [step, setStep] = useState<number>(1);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [generatedResult, setGeneratedResult] = useState<any>(null);
+  const [generatedResult, setGeneratedResult] = useState<GeneratedResult | null>(null);
 
   const handleFormSubmit = (data: UserData) => {
     setUserData(data);
