@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import AppHeader from "../components/AppHeader";
 import ProcessingLoader from "../components/ProcessingLoader";
 import { toast } from "@/components/ui/sonner";
+import { generatePoem, generatePortrait } from "../utils/openaiService";
+import { v4 as uuidv4 } from "uuid";
 
 const Index = () => {
   const [step, setStep] = useState<number>(1);
@@ -34,34 +36,35 @@ const Index = () => {
     setIsProcessing(true);
 
     try {
-      // Convert base64 image to blob
-      const fetchResponse = await fetch(capturedImage);
-      const blob = await fetchResponse.blob();
-
-      // Create form data for the API
-      const formData = new FormData();
-      formData.append('name', userData.name);
-      formData.append('designation', userData.designation);
-      formData.append('company', userData.company);
-      formData.append('email', userData.email);
-      formData.append('image', blob, 'user-image.jpg');
-
-      // Call the API to process the data
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to process your request');
-      }
-
-      const result = await response.json();
+      // Generate the poem using OpenAI
+      const poem = await generatePoem(
+        userData.name,
+        userData.designation,
+        userData.company
+      );
+      
+      // Generate the portrait using DALL-E
+      const portraitUrl = await generatePortrait(userData.name, capturedImage);
+      
+      // Create a result object
+      const result = {
+        id: uuidv4(),
+        poem,
+        portraitUrl,
+        createdAt: new Date().toISOString(),
+      };
+      
+      // Store in local storage (simulating database)
+      const results = JSON.parse(localStorage.getItem('generatedResults') || '[]');
+      results.push(result);
+      localStorage.setItem('generatedResults', JSON.stringify(results));
+      
       setGeneratedResult(result);
       setStep(3);
+      toast.success("Your personalized poem and portrait have been generated!");
     } catch (error) {
       console.error('Error generating content:', error);
-      toast.error("Failed to generate content. Please try again.");
+      toast.error("Failed to generate content. Please check your API key and try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -74,23 +77,10 @@ const Index = () => {
     }
 
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: userData.email,
-          name: userData.name,
-          resultId: generatedResult.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send email');
-      }
-
-      toast.success("Email sent successfully!");
+      // In a frontend-only app, we'll just simulate sending an email
+      // In real-world, you'd call an email service API
+      toast.success(`Email would be sent to ${userData.email} with your creation!`);
+      toast.info("This is a simulation - no actual email is sent in this demo.");
     } catch (error) {
       console.error('Error sending email:', error);
       toast.error("Failed to send email. Please try again.");
