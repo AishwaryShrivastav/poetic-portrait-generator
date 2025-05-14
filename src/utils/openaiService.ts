@@ -27,7 +27,7 @@ export const generatePoem = async (name: string, designation: string, company: s
   return poems[Math.floor(Math.random() * poems.length)];
 };
 
-// Mock function to simulate portrait generation
+// Function to simulate portrait generation with reference images
 export const generatePortrait = async (
   name: string, 
   designation: string, 
@@ -39,18 +39,23 @@ export const generatePortrait = async (
     console.log(`Starting portrait generation process for ${name}, ${designation}`);
     console.log(`Selected style: ${style}`);
     console.log(`Number of reference images: ${additionalImages.length + 1}`);
-    console.log(`Main image length: ${mainImage?.length > 100 ? mainImage.substring(0, 100) + '...' : 'Invalid or empty'}`);
     
-    if (!mainImage || mainImage.length < 100) {
+    // Validate main image data
+    if (!mainImage || mainImage.length < 100 || !mainImage.startsWith('data:image')) {
       console.error('Main image data is invalid or empty');
       throw new Error('Invalid main image data');
     }
+    console.log(`Main image length: ${mainImage.length > 100 ? mainImage.substring(0, 100) + '...' : 'Invalid or empty'}`);
     
     // Log information about additional images
     if (additionalImages.length > 0) {
       console.log(`Using ${additionalImages.length} additional reference images for better quality`);
       additionalImages.forEach((img, i) => {
-        console.log(`Additional image ${i + 1} length: ${img?.length > 100 ? img.substring(0, 100) + '...' : 'Invalid or empty'}`);
+        if (img && img.length > 100) {
+          console.log(`Additional image ${i + 1} length: ${img.substring(0, 100) + '...'}`);
+        } else {
+          console.warn(`Additional image ${i + 1} is invalid or empty`);
+        }
       });
     }
     
@@ -59,6 +64,9 @@ export const generatePortrait = async (
     const additionalDelay = additionalImages.length * 500; // 500ms extra per additional image
     console.log(`Simulating API delay: ${baseDelay + additionalDelay}ms`);
     await new Promise(resolve => setTimeout(resolve, baseDelay + additionalDelay));
+    
+    // In a real implementation, we would pass the images to the OpenAI API
+    // For this mock service, we'll return style-based portraits
     
     // Mock portrait URLs based on style
     const portraits = {

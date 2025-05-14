@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import UserForm from "../components/UserForm";
 import ImageCapture from "../components/ImageCapture";
@@ -30,6 +29,12 @@ const Index = () => {
   const handleGenerate = async (style: ImageStyle = "professional") => {
     if (!userData || capturedImages.length === 0) {
       toast.error("Missing data. Please complete all steps.");
+      return;
+    }
+
+    // Validate images
+    if (!capturedImages[0] || !capturedImages[0].startsWith('data:image')) {
+      toast.error("Main image is invalid. Please upload a clear face image.");
       return;
     }
 
@@ -71,7 +76,7 @@ const Index = () => {
       toast.success("Your personalized poem and portrait have been generated!");
     } catch (error) {
       console.error('Error generating content:', error);
-      toast.error("Failed to generate content. Please check your API key and try again.");
+      toast.error("Failed to generate content. Please try again with clearer images.");
     } finally {
       setIsProcessing(false);
     }
@@ -179,7 +184,10 @@ const Index = () => {
   };
 
   const handlePrint = () => {
-    window.print();
+    // Add a small delay to ensure the content is ready for printing
+    setTimeout(() => {
+      window.print();
+    }, 300);
   };
 
   const handleReset = () => {
@@ -228,7 +236,7 @@ const Index = () => {
         </Card>
       </main>
       
-      <footer className="py-2 text-center text-sm text-gray-500 dark:text-gray-400">
+      <footer className="py-2 text-center text-sm text-gray-500 dark:text-gray-400 print:hidden">
         © {new Date().getFullYear()}
       </footer>
     </div>

@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
@@ -65,10 +64,21 @@ const ImageCapture = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
-        const updatedImages = [...capturedImages, event.target.result as string];
+        const imageData = event.target.result as string;
+        
+        // Validate image data
+        if (!imageData.startsWith('data:image')) {
+          toast.error("Invalid image format. Please upload a valid image file.");
+          return;
+        }
+        
+        const updatedImages = [...capturedImages, imageData];
         onCapture(updatedImages);
         toast.success("Image uploaded successfully!");
       }
+    };
+    reader.onerror = () => {
+      toast.error("Error reading file. Please try another image.");
     };
     reader.readAsDataURL(file);
   };
@@ -84,6 +94,22 @@ const ImageCapture = ({
 
   const toggleMethod = () => {
     setUseWebcam(!useWebcam);
+  };
+
+  const handleGenerateClick = () => {
+    if (capturedImages.length === 0) {
+      toast.error("Please upload or capture at least one image.");
+      return;
+    }
+    
+    // Validate all images
+    const invalidImages = capturedImages.filter(img => !img || !img.startsWith('data:image'));
+    if (invalidImages.length > 0) {
+      toast.error("Some images are invalid. Please remove them and try again.");
+      return;
+    }
+    
+    onGenerate(selectedStyle);
   };
 
   const imageStyles = [
@@ -262,7 +288,7 @@ const ImageCapture = ({
 
               <div className="flex space-x-3 mt-4">
                 <Button 
-                  onClick={() => onGenerate(selectedStyle)}
+                  onClick={handleGenerateClick}
                   className="w-full bg-theme-600 hover:bg-theme-700 text-white"
                   disabled={capturedImages.length === 0}
                 >

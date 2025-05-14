@@ -1,4 +1,3 @@
-
 import { UserData, ImageStyle } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -180,7 +179,7 @@ const ResultsDisplay = ({
       </div>
 
       {/* Print-only layout for A6 size */}
-      <div className="hidden print:block print:w-full print:h-[105mm] print:relative print:overflow-hidden print:p-2">
+      <div id="printContent" className="hidden print:block print:w-full print:h-[148mm] print:relative">
         {/* Logos for print */}
         <div className="print:absolute print:top-2 print:left-2 print:w-10 print:h-10">
           <img 
@@ -198,16 +197,16 @@ const ResultsDisplay = ({
         </div>
         
         {/* Portrait image for print - centered on A6 */}
-        <div className="print:w-full print:text-center print:mb-2">
+        <div className="print:w-full print:text-center print:my-4">
           <img 
             src={result.portraitUrl} 
             alt="AI Generated Portrait" 
-            className="print:max-h-[60mm] print:max-w-full print:mx-auto print:object-contain"
+            className="print:max-h-[70mm] print:max-w-[90mm] print:mx-auto print:object-contain"
           />
         </div>
         
         {/* Poem text for print - styled with handwriting font */}
-        <div className="print:mx-auto print:max-w-[100mm] print:font-handwriting print:text-base print:text-center">
+        <div className="print:mx-auto print:max-w-[90mm] print:font-['Dancing_Script'] print:text-base print:text-center">
           <div className="print:leading-tight print:text-gray-800">
             {formattedPoem}
           </div>
@@ -217,15 +216,6 @@ const ResultsDisplay = ({
             <p className="print:text-xs print:mt-0.5 print:text-gray-600">{userData.designation} at {userData.company}</p>
           </div>
         </div>
-
-        <style type="text/css" media="print">
-          {`
-          @page {
-            size: 105mm 148mm; /* A6 size */
-            margin: 5mm;
-          }
-          `}
-        </style>
       </div>
 
       <div className="flex flex-wrap gap-3 justify-center pt-4 print:hidden">
@@ -245,7 +235,7 @@ const ResultsDisplay = ({
           className="border-theme-300"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
           </svg>
           Print (A6)
         </Button>
