@@ -28,49 +28,80 @@ const ResultsDisplay = ({
 
   return (
     <div className="space-y-6 print:p-0">
-      <div className="text-center space-y-2 print:mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 print:text-black">
+      {/* Header section - only visible on screen */}
+      <div className="text-center space-y-2 print:hidden">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
           Your Creation is Ready!
         </h2>
-        <p className="text-gray-600 dark:text-gray-300 print:text-gray-700">
+        <p className="text-gray-600 dark:text-gray-300">
           Here's your personalized poem and portrait
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 print:gap-8">
-        <Card className="p-6 bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700 print:shadow-none print:border-none">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300 print:text-theme-800">
-              Personalized Poem
-            </h3>
-            
-            <Separator className="bg-theme-200 dark:bg-theme-700" />
-            
-            <div className="italic text-gray-700 dark:text-gray-200 leading-relaxed print:text-gray-800">
-              {formattedPoem}
+      {/* Content visible both on screen and in print */}
+      <div className="grid md:grid-cols-2 gap-6 print:block print:m-0">
+        {/* Screen-only cards */}
+        <div className="print:hidden">
+          <Card className="p-6 bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300">
+                Personalized Poem
+              </h3>
+              
+              <Separator className="bg-theme-200 dark:bg-theme-700" />
+              
+              <div className="italic text-gray-700 dark:text-gray-200 leading-relaxed">
+                {formattedPoem}
+              </div>
+              
+              <div className="text-sm text-gray-500 pt-2">
+                For: {userData.name}, {userData.designation} at {userData.company}
+              </div>
             </div>
-            
-            <div className="text-sm text-gray-500 pt-2">
-              For: {userData.name}, {userData.designation} at {userData.company}
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700 overflow-hidden print:shadow-none print:border-none">
-          <div className="p-4 pb-0 print:p-0">
-            <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300 mb-2 print:text-theme-800 print:mb-4">
-              AI Portrait
-            </h3>
-          </div>
-          
-          <div className="p-4 print:p-0">
+        <div className="print:hidden">
+          <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-gray-700 overflow-hidden">
+            <div className="p-4 pb-0">
+              <h3 className="text-lg font-medium text-theme-700 dark:text-theme-300 mb-2">
+                AI Portrait
+              </h3>
+            </div>
+            
+            <div className="p-4">
+              <img 
+                src={result.portraitUrl} 
+                alt="AI Generated Portrait" 
+                className="w-full h-auto rounded-md"
+              />
+            </div>
+          </Card>
+        </div>
+
+        {/* Print-only layout */}
+        <div className="hidden print:block print:w-full print:h-[297mm] print:relative print:overflow-hidden print:p-4">
+          {/* Portrait image for print */}
+          <div className="print:w-full print:text-center print:mb-6">
             <img 
               src={result.portraitUrl} 
               alt="AI Generated Portrait" 
-              className="w-full h-auto rounded-md print:rounded-none"
+              className="print:max-h-[160mm] print:max-w-full print:mx-auto print:object-contain"
             />
           </div>
-        </Card>
+          
+          {/* Poem text for print - styled with handwriting font */}
+          <div className="print:mt-8 print:mx-auto print:max-w-[180mm] print:font-handwriting print:text-2xl print:text-center">
+            <div className="print:leading-relaxed print:text-gray-800">
+              {formattedPoem}
+            </div>
+            
+            <div className="print:mt-6 print:text-right print:text-xl print:mr-4">
+              <p>For: {userData.name}</p>
+              <p className="print:text-base print:mt-1 print:text-gray-600">{userData.designation} at {userData.company}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 justify-center pt-4 print:hidden">
