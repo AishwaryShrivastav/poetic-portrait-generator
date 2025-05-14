@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { UserData } from "../types/types";
 import { Input } from "@/components/ui/input";
@@ -7,10 +6,11 @@ import { Button } from "@/components/ui/button";
 
 interface UserFormProps {
   onSubmit: (data: UserData) => void;
+  initialData?: UserData;
 }
 
-const UserForm = ({ onSubmit }: UserFormProps) => {
-  const [formData, setFormData] = useState<UserData>({
+const UserForm = ({ onSubmit, initialData }: UserFormProps) => {
+  const [formData, setFormData] = useState<UserData>(initialData || {
     name: "",
     designation: "",
     company: "",
