@@ -105,34 +105,35 @@
     }
   }
 
-  /* Print-specific styles - updated for better layout */
+  /* Print-specific styles - updated for better layout and forcing color */
   @media print {
     @page {
       size: 105mm 148mm; /* A6 size */
       margin: 5mm;
+      color-adjust: exact;
     }
 
-    body {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-      margin: 0;
-      padding: 0;
+    html, body {
       width: 105mm;
       height: 148mm;
-      background-color: white !important;
-      color: black !important;
-      overflow: hidden !important;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
     }
     
     #printContent {
       display: block !important;
       width: 95mm !important;
       height: 138mm !important;
-      position: absolute !important;
-      top: 5mm !important;
-      left: 5mm !important;
+      position: relative !important;
       margin: 0 !important;
       padding: 0 !important;
+      background: white !important;
+      color: black !important;
       overflow: visible !important;
     }
     
@@ -146,9 +147,32 @@
     }
     
     /* Hide all other content */
-    body > *:not(#printContent),
-    #root > *:not(#printContent) {
+    body > *:not(#root),
+    #root > *:not([class*="App"]),
+    .App > *:not([id="printContent"]) {
       display: none !important;
+    }
+    
+    /* Force all print elements to show */
+    #printContent * {
+      display: block;
+      color: black !important;
+      background: white !important;
+      visibility: visible !important;
+    }
+    
+    /* Special handling for images */
+    #printContent img {
+      max-width: 90mm !important;
+      max-height: 60mm !important;
+      display: block !important;
+      margin: 0 auto !important;
+      page-break-inside: avoid !important;
+    }
+    
+    #printContent p {
+      margin-bottom: 2mm !important;
+      color: black !important;
     }
   }
 }

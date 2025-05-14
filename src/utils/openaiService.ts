@@ -27,7 +27,7 @@ export const generatePoem = async (name: string, designation: string, company: s
   return poems[Math.floor(Math.random() * poems.length)];
 };
 
-// Improved function to simulate portrait generation with reference images
+// Function to simulate portrait generation with proper handling of user images
 export const generatePortrait = async (
   name: string, 
   designation: string, 
@@ -45,6 +45,7 @@ export const generatePortrait = async (
       console.error('Main image data is invalid or empty');
       throw new Error('Invalid main image data');
     }
+    
     console.log(`Main image length: ${mainImage.length > 100 ? mainImage.substring(0, 100) + '...' : 'Invalid or empty'}`);
     
     // Log information about additional images
@@ -66,28 +67,16 @@ export const generatePortrait = async (
     await new Promise(resolve => setTimeout(resolve, baseDelay + additionalDelay));
     
     // In a real implementation, we would send the images to the OpenAI API
-    // For this mock service, we'll return style-based portraits that are more consistent
+    // For this mock service, we'll return style-based consistent portraits
     
-    // More consistent portrait URLs based on style - these would be replaced with actual AI-generated images
+    // Fixed portrait URLs based on style to ensure style consistency
     const portraits = {
-      professional: [
-        "https://cdn.pixabay.com/photo/2016/11/21/14/53/adult-1845814_1280.jpg",
-      ],
-      linkedin: [
-        "https://cdn.pixabay.com/photo/2015/03/03/20/42/man-657869_1280.jpg",
-      ],
-      avatar: [
-        "https://cdn.pixabay.com/photo/2022/10/03/16/04/anime-7496534_1280.jpg",
-      ],
-      marvel: [
-        "https://cdn.pixabay.com/photo/2021/07/20/14/59/iron-man-6480952_1280.jpg",
-      ],
-      rockstar: [
-        "https://cdn.pixabay.com/photo/2018/04/27/03/50/musician-3353823_1280.jpg",
-      ],
-      gta: [
-        "https://cdn.pixabay.com/photo/2021/09/15/11/34/gaming-6626903_1280.jpg",
-      ]
+      professional: "https://cdn.pixabay.com/photo/2016/11/21/14/53/adult-1845814_1280.jpg",
+      linkedin: "https://cdn.pixabay.com/photo/2015/03/03/20/42/man-657869_1280.jpg",
+      avatar: "https://cdn.pixabay.com/photo/2022/10/03/16/04/anime-7496534_1280.jpg",
+      marvel: "https://cdn.pixabay.com/photo/2021/07/20/14/59/iron-man-6480952_1280.jpg",
+      rockstar: "https://cdn.pixabay.com/photo/2018/04/27/03/50/musician-3353823_1280.jpg",
+      gta: "https://cdn.pixabay.com/photo/2021/09/15/11/34/gaming-6626903_1280.jpg"
     };
     
     // Check if the style exists in our portraits object
@@ -96,10 +85,11 @@ export const generatePortrait = async (
       style = "professional";
     }
     
-    // Instead of random selection, we'll now use a consistent image for each style
-    const selectedImage = portraits[style][0];
+    // Use the consistent image for the selected style
+    const selectedImage = portraits[style];
     console.log(`Generated portrait URL for style ${style}: ${selectedImage}`);
     return selectedImage;
+    
   } catch (error) {
     console.error('Error in generatePortrait:', error);
     // Return a fallback image instead of throwing to avoid breaking the UI

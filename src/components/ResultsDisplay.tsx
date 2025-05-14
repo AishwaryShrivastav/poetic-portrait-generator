@@ -178,9 +178,9 @@ const ResultsDisplay = ({
         </div>
       </div>
 
-      {/* Print-only layout for A6 size - Updated with explicit visibility */}
-      <div id="printContent" className="hidden print:block print:w-full print:h-full print:overflow-visible">
-        {/* Logos for print */}
+      {/* Print-only layout for A6 size - Updated with explicit visibility and improved display */}
+      <div id="printContent" className="hidden print:block print:w-full print:h-full print:overflow-visible print:relative">
+        {/* Logos for print - positioned absolutely */}
         <div className="print:absolute print:top-2 print:left-2 print:w-10 print:h-10">
           <img 
             src={logoLeft} 
@@ -196,24 +196,26 @@ const ResultsDisplay = ({
           />
         </div>
         
-        {/* Portrait image for print - centered on A6 */}
-        <div className="print:w-full print:flex print:justify-center print:my-4">
+        {/* Portrait image for print - centered properly for A6 */}
+        <div className="print:w-full print:flex print:justify-center print:mt-14 print:mb-4">
+          {/* Force image to be displayed with proper dimensions */}
           <img 
             src={result.portraitUrl} 
             alt="AI Generated Portrait" 
-            className="print:max-h-[70mm] print:max-w-[90mm] print:object-contain"
+            className="print:max-h-[60mm] print:max-w-[90mm] print:object-contain print:block"
+            style={{ display: 'block', pageBreakInside: 'avoid' }}
           />
         </div>
         
-        {/* Poem text for print - styled with handwriting font */}
-        <div className="print:w-[90mm] print:mx-auto print:font-['Dancing_Script'] print:text-base print:text-center">
-          <div className="print:leading-tight print:text-gray-800">
+        {/* Poem text for print - styled with handwriting font and proper spacing */}
+        <div className="print:w-[90mm] print:mx-auto print:mt-4 print:font-['Dancing_Script','cursive'] print:text-base print:text-center print:text-black">
+          <div className="print:leading-tight print:text-black">
             {formattedPoem}
           </div>
           
-          <div className="print:mt-2 print:text-right print:text-sm">
-            <p>For: {userData.name}</p>
-            <p className="print:text-xs print:mt-0.5 print:text-gray-600">{userData.designation} at {userData.company}</p>
+          <div className="print:mt-4 print:text-right print:text-sm">
+            <p className="print:text-black">For: {userData.name}</p>
+            <p className="print:text-xs print:mt-0.5 print:text-gray-800">{userData.designation} at {userData.company}</p>
           </div>
         </div>
       </div>
