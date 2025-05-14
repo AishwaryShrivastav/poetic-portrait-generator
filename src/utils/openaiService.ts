@@ -35,48 +35,73 @@ export const generatePortrait = async (
   style: ImageStyle = "professional",
   additionalImages: string[] = []
 ): Promise<string> => {
-  console.log(`Generating ${style} portrait for ${name}, ${designation} with ${additionalImages.length + 1} reference images`);
-  
-  // Log information about additional images
-  if (additionalImages.length > 0) {
-    console.log(`Using ${additionalImages.length} additional reference images for better quality`);
+  try {
+    console.log(`Starting portrait generation process for ${name}, ${designation}`);
+    console.log(`Selected style: ${style}`);
+    console.log(`Number of reference images: ${additionalImages.length + 1}`);
+    console.log(`Main image length: ${mainImage?.length > 100 ? mainImage.substring(0, 100) + '...' : 'Invalid or empty'}`);
+    
+    if (!mainImage || mainImage.length < 100) {
+      console.error('Main image data is invalid or empty');
+      throw new Error('Invalid main image data');
+    }
+    
+    // Log information about additional images
+    if (additionalImages.length > 0) {
+      console.log(`Using ${additionalImages.length} additional reference images for better quality`);
+      additionalImages.forEach((img, i) => {
+        console.log(`Additional image ${i + 1} length: ${img?.length > 100 ? img.substring(0, 100) + '...' : 'Invalid or empty'}`);
+      });
+    }
+    
+    // Simulate API call delay - longer for more images
+    const baseDelay = 2000;
+    const additionalDelay = additionalImages.length * 500; // 500ms extra per additional image
+    console.log(`Simulating API delay: ${baseDelay + additionalDelay}ms`);
+    await new Promise(resolve => setTimeout(resolve, baseDelay + additionalDelay));
+    
+    // Mock portrait URLs based on style
+    const portraits = {
+      professional: [
+        "https://cdn.pixabay.com/photo/2016/11/21/14/53/adult-1845814_1280.jpg",
+        "https://cdn.pixabay.com/photo/2017/08/12/18/31/male-2634974_1280.jpg",
+      ],
+      linkedin: [
+        "https://cdn.pixabay.com/photo/2015/03/03/20/42/man-657869_1280.jpg",
+        "https://cdn.pixabay.com/photo/2017/11/02/14/26/model-2911330_1280.jpg",
+      ],
+      avatar: [
+        "https://cdn.pixabay.com/photo/2022/10/03/16/04/anime-7496534_1280.jpg",
+        "https://cdn.pixabay.com/photo/2022/12/01/04/40/fantasy-7628308_1280.jpg",
+      ],
+      marvel: [
+        "https://cdn.pixabay.com/photo/2021/07/20/14/59/iron-man-6480952_1280.jpg",
+        "https://cdn.pixabay.com/photo/2020/07/02/19/36/marvel-5364165_1280.jpg",
+      ],
+      rockstar: [
+        "https://cdn.pixabay.com/photo/2018/04/27/03/50/musician-3353823_1280.jpg",
+        "https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_1280.jpg",
+      ],
+      gta: [
+        "https://cdn.pixabay.com/photo/2021/09/15/11/34/gaming-6626903_1280.jpg",
+        "https://cdn.pixabay.com/photo/2023/06/02/14/10/gamer-8035908_1280.jpg",
+      ]
+    };
+    
+    // Check if the style exists in our portraits object
+    if (!portraits[style]) {
+      console.warn(`Style "${style}" not found, defaulting to professional`);
+      style = "professional";
+    }
+    
+    // For demo, we'll return a random image from the style's collection
+    const stylePortraits = portraits[style];
+    const selectedImage = stylePortraits[Math.floor(Math.random() * stylePortraits.length)];
+    console.log(`Generated portrait URL: ${selectedImage}`);
+    return selectedImage;
+  } catch (error) {
+    console.error('Error in generatePortrait:', error);
+    // Return a fallback image instead of throwing to avoid breaking the UI
+    return "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
   }
-  
-  // Simulate API call delay - longer for more images
-  const baseDelay = 2000;
-  const additionalDelay = additionalImages.length * 500; // 500ms extra per additional image
-  await new Promise(resolve => setTimeout(resolve, baseDelay + additionalDelay));
-  
-  // Mock portrait URLs based on style
-  const portraits = {
-    professional: [
-      "https://cdn.pixabay.com/photo/2016/11/21/14/53/adult-1845814_1280.jpg",
-      "https://cdn.pixabay.com/photo/2017/08/12/18/31/male-2634974_1280.jpg",
-    ],
-    linkedin: [
-      "https://cdn.pixabay.com/photo/2015/03/03/20/42/man-657869_1280.jpg",
-      "https://cdn.pixabay.com/photo/2017/11/02/14/26/model-2911330_1280.jpg",
-    ],
-    avatar: [
-      "https://cdn.pixabay.com/photo/2022/10/03/16/04/anime-7496534_1280.jpg",
-      "https://cdn.pixabay.com/photo/2022/12/01/04/40/fantasy-7628308_1280.jpg",
-    ],
-    marvel: [
-      "https://cdn.pixabay.com/photo/2021/07/20/14/59/iron-man-6480952_1280.jpg",
-      "https://cdn.pixabay.com/photo/2020/07/02/19/36/marvel-5364165_1280.jpg",
-    ],
-    rockstar: [
-      "https://cdn.pixabay.com/photo/2018/04/27/03/50/musician-3353823_1280.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_1280.jpg",
-    ],
-    gta: [
-      "https://cdn.pixabay.com/photo/2021/09/15/11/34/gaming-6626903_1280.jpg",
-      "https://cdn.pixabay.com/photo/2023/06/02/14/10/gamer-8035908_1280.jpg",
-    ]
-  };
-
-  // For demo, we'll return a random image from the style's collection
-  // In a real app, this would be the URL from the AI-generated image
-  const stylePortraits = portraits[style] || portraits.professional;
-  return stylePortraits[Math.floor(Math.random() * stylePortraits.length)];
 };
