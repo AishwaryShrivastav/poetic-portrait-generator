@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
 
 @tailwind base;
@@ -104,7 +105,7 @@
     }
   }
 
-  /* Print-specific styles */
+  /* Print-specific styles - updated for better layout */
   @media print {
     @page {
       size: 105mm 148mm; /* A6 size */
@@ -120,17 +121,28 @@
       height: 148mm;
       background-color: white !important;
       color: black !important;
+      overflow: hidden !important;
     }
     
     #printContent {
       display: block !important;
-      width: 100% !important;
-      height: 100% !important;
+      width: 95mm !important;
+      height: 138mm !important;
       position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
+      top: 5mm !important;
+      left: 5mm !important;
       margin: 0 !important;
       padding: 0 !important;
+      overflow: visible !important;
+    }
+    
+    /* Make sure Dancing Script font is available in print */
+    @font-face {
+      font-family: 'Dancing Script';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://fonts.gstatic.com/s/dancingscript/v19/If2cXTr6YS-zF4S-kcSWSVi_sxjsohD9F50Ruu7BMSo3Sup5.ttf') format('truetype');
+      font-display: swap;
     }
     
     /* Hide all other content */

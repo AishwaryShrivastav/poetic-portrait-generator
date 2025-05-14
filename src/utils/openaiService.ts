@@ -27,7 +27,7 @@ export const generatePoem = async (name: string, designation: string, company: s
   return poems[Math.floor(Math.random() * poems.length)];
 };
 
-// Function to simulate portrait generation with reference images
+// Improved function to simulate portrait generation with reference images
 export const generatePortrait = async (
   name: string, 
   designation: string, 
@@ -65,34 +65,28 @@ export const generatePortrait = async (
     console.log(`Simulating API delay: ${baseDelay + additionalDelay}ms`);
     await new Promise(resolve => setTimeout(resolve, baseDelay + additionalDelay));
     
-    // In a real implementation, we would pass the images to the OpenAI API
-    // For this mock service, we'll return style-based portraits
+    // In a real implementation, we would send the images to the OpenAI API
+    // For this mock service, we'll return style-based portraits that are more consistent
     
-    // Mock portrait URLs based on style
+    // More consistent portrait URLs based on style - these would be replaced with actual AI-generated images
     const portraits = {
       professional: [
         "https://cdn.pixabay.com/photo/2016/11/21/14/53/adult-1845814_1280.jpg",
-        "https://cdn.pixabay.com/photo/2017/08/12/18/31/male-2634974_1280.jpg",
       ],
       linkedin: [
         "https://cdn.pixabay.com/photo/2015/03/03/20/42/man-657869_1280.jpg",
-        "https://cdn.pixabay.com/photo/2017/11/02/14/26/model-2911330_1280.jpg",
       ],
       avatar: [
         "https://cdn.pixabay.com/photo/2022/10/03/16/04/anime-7496534_1280.jpg",
-        "https://cdn.pixabay.com/photo/2022/12/01/04/40/fantasy-7628308_1280.jpg",
       ],
       marvel: [
         "https://cdn.pixabay.com/photo/2021/07/20/14/59/iron-man-6480952_1280.jpg",
-        "https://cdn.pixabay.com/photo/2020/07/02/19/36/marvel-5364165_1280.jpg",
       ],
       rockstar: [
         "https://cdn.pixabay.com/photo/2018/04/27/03/50/musician-3353823_1280.jpg",
-        "https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_1280.jpg",
       ],
       gta: [
         "https://cdn.pixabay.com/photo/2021/09/15/11/34/gaming-6626903_1280.jpg",
-        "https://cdn.pixabay.com/photo/2023/06/02/14/10/gamer-8035908_1280.jpg",
       ]
     };
     
@@ -102,10 +96,9 @@ export const generatePortrait = async (
       style = "professional";
     }
     
-    // For demo, we'll return a random image from the style's collection
-    const stylePortraits = portraits[style];
-    const selectedImage = stylePortraits[Math.floor(Math.random() * stylePortraits.length)];
-    console.log(`Generated portrait URL: ${selectedImage}`);
+    // Instead of random selection, we'll now use a consistent image for each style
+    const selectedImage = portraits[style][0];
+    console.log(`Generated portrait URL for style ${style}: ${selectedImage}`);
     return selectedImage;
   } catch (error) {
     console.error('Error in generatePortrait:', error);
