@@ -108,13 +108,22 @@
   /* Print-specific styles */
   @media print {
     @page {
-      size: A4;
-      margin: 15mm;
+      size: 105mm 148mm; /* A6 size */
+      margin: 5mm;
     }
 
     body {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
+      margin: 0;
+      padding: 0;
+      width: 105mm;
+      height: 148mm;
+    }
+    
+    /* Hide all other content */
+    body > *:not(.print-container) {
+      display: none;
     }
   }
 }

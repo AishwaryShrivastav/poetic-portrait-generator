@@ -1,16 +1,18 @@
 
 import React from 'react';
+import logoLeft from '../assets/logo-left.svg';
+import logoRight from '../assets/logo-right.svg';
 
 const AppHeader = () => {
   return (
-    <header className="py-6 text-center">
-      <div className="container mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-theme-700 to-theme-500 mb-2">
-          Poem & Portrait
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md mx-auto">
-          Generate personalized poems and artistic portraits with AI
-        </p>
+    <header className="py-4 px-6">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="w-16 h-16">
+          <img src={logoLeft} alt="Left Logo" className="w-full h-full object-contain" />
+        </div>
+        <div className="w-16 h-16">
+          <img src={logoRight} alt="Right Logo" className="w-full h-full object-contain" />
+        </div>
       </div>
     </header>
   );

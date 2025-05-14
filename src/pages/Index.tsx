@@ -14,7 +14,7 @@ import { UserData, GeneratedResult, ImageStyle } from "../types/types";
 const Index = () => {
   const [step, setStep] = useState<number>(1);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [generatedResult, setGeneratedResult] = useState<GeneratedResult | null>(null);
 
@@ -23,12 +23,12 @@ const Index = () => {
     setStep(2);
   };
 
-  const handleImageCapture = (imageData: string) => {
-    setCapturedImage(imageData);
+  const handleImageCapture = (imageData: string[]) => {
+    setCapturedImages(imageData);
   };
 
   const handleGenerate = async (style: ImageStyle = "professional") => {
-    if (!userData || !capturedImage) {
+    if (!userData || capturedImages.length === 0) {
       toast.error("Missing data. Please complete all steps.");
       return;
     }
@@ -47,8 +47,9 @@ const Index = () => {
       const portraitUrl = await generatePortrait(
         userData.name,
         userData.designation,
-        capturedImage,
-        style
+        capturedImages[0], // Use the first image as main reference
+        style,
+        capturedImages.slice(1) // Pass additional images as references
       );
       
       // Create a result object
@@ -116,7 +117,7 @@ const Index = () => {
   };
 
   const handleRegenerateImage = async (style?: ImageStyle) => {
-    if (!userData || !capturedImage || !generatedResult) {
+    if (!userData || capturedImages.length === 0 || !generatedResult) {
       toast.error("Missing data. Cannot regenerate image.");
       return;
     }
@@ -130,8 +131,9 @@ const Index = () => {
       const newPortraitUrl = await generatePortrait(
         userData.name,
         userData.designation,
-        capturedImage,
-        imageStyle
+        capturedImages[0], // Use the first image as main reference
+        imageStyle,
+        capturedImages.slice(1) // Pass additional images as references
       );
       
       // Update the existing result with the new image
@@ -183,7 +185,7 @@ const Index = () => {
   const handleReset = () => {
     setStep(1);
     setUserData(null);
-    setCapturedImage(null);
+    setCapturedImages([]);
     setGeneratedResult(null);
   };
 
@@ -191,9 +193,9 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
       <AppHeader />
       
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-xl border border-purple-100 dark:border-gray-700">
-          <CardContent className="p-6 md:p-8">
+      <main className="flex-grow container mx-auto px-4 py-4 w-full max-w-[1600px]">
+        <Card className="mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-xl border border-purple-100 dark:border-gray-700 w-full">
+          <CardContent className="p-4 md:p-6">
             {isProcessing ? (
               <ProcessingLoader />
             ) : (
@@ -203,7 +205,7 @@ const Index = () => {
                 {step === 2 && (
                   <ImageCapture 
                     onCapture={handleImageCapture}
-                    capturedImage={capturedImage}
+                    capturedImages={capturedImages}
                     onGenerate={handleGenerate}
                     onBack={() => setStep(1)}
                   />
@@ -226,8 +228,8 @@ const Index = () => {
         </Card>
       </main>
       
-      <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        Personalized Poem & Portrait Generator © {new Date().getFullYear()}
+      <footer className="py-2 text-center text-sm text-gray-500 dark:text-gray-400">
+        © {new Date().getFullYear()}
       </footer>
     </div>
   );
