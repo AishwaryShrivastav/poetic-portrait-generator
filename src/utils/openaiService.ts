@@ -1,4 +1,5 @@
 
+
 // This is a utility service for making OpenAI API calls directly from the frontend
 // NOTE: This is not recommended for production use as it exposes your API key
 
@@ -57,6 +58,7 @@ export async function generatePoem(
 
 export async function generatePortrait(
   name: string,
+  designation: string,
   imageBase64: string
 ): Promise<string> {
   try {
@@ -66,8 +68,11 @@ export async function generatePortrait(
       throw new Error("API Key is required");
     }
 
-    // Create a prompt for the portrait generation
-    const portraitPrompt = `Create a professional, animated-style portrait for ${name}. Make it artistic and vibrant with a neutral background.`;
+    // Create a more detailed prompt for the portrait generation that includes professional role
+    const portraitPrompt = `Create a professional, animated-style portrait for ${name} who works as a ${designation}. 
+    The portrait should be a high-quality, artistic representation that clearly shows their face and reflects their professional role. 
+    Make the portrait vibrant and detailed with a neutral background suitable for professional use. 
+    The face should be front-facing and clearly visible, matching the appearance in the reference image.`;
 
     const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",

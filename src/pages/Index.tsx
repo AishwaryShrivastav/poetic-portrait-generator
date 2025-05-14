@@ -3,7 +3,6 @@ import { useState } from "react";
 import UserForm from "../components/UserForm";
 import ImageCapture from "../components/ImageCapture";
 import ResultsDisplay from "../components/ResultsDisplay";
-import { UserData } from "../types/types";
 import { Card, CardContent } from "@/components/ui/card";
 import AppHeader from "../components/AppHeader";
 import ProcessingLoader from "../components/ProcessingLoader";
@@ -43,8 +42,12 @@ const Index = () => {
         userData.company
       );
       
-      // Generate the portrait using DALL-E
-      const portraitUrl = await generatePortrait(userData.name, capturedImage);
+      // Generate the portrait using DALL-E with designation included
+      const portraitUrl = await generatePortrait(
+        userData.name,
+        userData.designation,
+        capturedImage
+      );
       
       // Create a result object
       const result = {
